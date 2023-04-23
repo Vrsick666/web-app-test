@@ -1,25 +1,40 @@
-from dash import Dash, html, dcc, callback, Output, Input
+import dash
+# from dash import dcc
+from dash import html
+from dash.dependencies import Input, Output
 import plotly.express as px
-import pandas as pd
 
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv')
+df = px.data.tips()
 
-app = Dash(__name__)
+app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1(children='Title of Dash App', style={'textAlign':'center'}),
-    dcc.Dropdown(df.country.unique(), 'Canada', id='dropdown-selection'),
-    dcc.Graph(id='graph-content')
+    html.Button("Rotate", id='button', n_clicks=0),
+    html.Div(id="output", children=[])
 ])
 
-@callback(
-    Output('graph-content', 'figure'),
-    Input('dropdown-selection', 'value')
-)
-def update_graph(value):
-    dff = df[df.country==value]
-    return px.line(dff, x='year', y='pop')
+
+@app.callback(
+    Output('output', 'children'),  # The output will be displayed in  html.Div(id="output)
+    [Input("button", "n_clicks")])
+def rotate_figure(n_clicks):
+    fig = px.histogram(df, x="sex", height=500)
+    fig.update_xaxes(tickangle=n_clicks * 45)
+
+    # The plotly figure is saved as HTML in a variable
+    html_data = fig.to_html(full_html=False, include_plotlyjs='cdn')
+
+    # The variable is then displayed as a plot using Iframe from dash_html_components
+    html_plot = html.Iframe(srcDoc=html_data,
+                            style={"height": "1000px",
+                                   "width": "1000px",
+                                   "display": "flex",
+                                   "align-items": "center",
+                                   "justify-content": "center"}
+                            )
+
+    # Now you can return the Iframe as a children of a Div
+    return html_plot
 
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+app.run_server(debug=True)
