@@ -1,0 +1,2 @@
+TUNNEL_URL = 'https://fa95-176-123-219-233.eu.ngrok.io'
+BOT_TOKEN = '5666550009:AAFdUR6_BoYxSAEPfZpZan-uX_ocK-TrrxQ'
