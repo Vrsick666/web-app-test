@@ -23,6 +23,17 @@ async def bot_webhook(update: dict):
     Dispatcher.set_current(dp)
     Bot.set_current(bot)
     await dp.process_update(telegram_update)
+    print(str(update['message']['from']['id']))
+    await bot.send_message(str(update['message']['from']['id']), 'accepted')
+
+
+@app.get(WEBHOOK_PATH+'/code')
+async def code_require():
+    telegram_update = types.Update(**{"update_id": 542413245, "callback_query": "get code"})
+    print(telegram_update)
+    Dispatcher.set_current(dp)
+    Bot.set_current(bot)
+    await dp.process_update(telegram_update)
 
 
 @app.on_event('shutdown')
